@@ -5,13 +5,17 @@ import modele.jeu.Piece;
 
 public abstract class DecorateurCasesAccessibles {
 
-    Plateau plateau; // TODO
-    Piece piece; // TODO
+    Plateau plateau;
+    Piece piece;
 
     private DecorateurCasesAccessibles base;
 
-    public DecorateurCasesAccessibles(DecorateurCasesAccessibles _baseDecorateur) {
+    public DecorateurCasesAccessibles(DecorateurCasesAccessibles _baseDecorateur,
+                                      Plateau _plateau,
+                                      Piece _piece) {
         base = _baseDecorateur;
+        plateau = _plateau;
+        piece = _piece;
     }
 
     public ArrayList<Case> getCasesAccessibles() {
