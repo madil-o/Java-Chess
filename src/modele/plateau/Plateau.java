@@ -75,6 +75,18 @@ public class Plateau extends Observable {
     private boolean contenuDansGrille(Point p) {
         return p.x >= 0 && p.x < SIZE_X && p.y >= 0 && p.y < SIZE_Y;
     }
+
+    private Case appliquerDirection(Direction d, Case c){
+        Point case_suiv = new Point();
+        case_suiv.x = map.get(c).x + d.dx;
+        case_suiv.y = map.get(c).y + d.dy;
+        if (contenuDansGrille(case_suiv)) {
+            Case retour = null;
+            retour = grilleCases[case_suiv.x][case_suiv.y];
+            return retour;
+        }
+        return c;
+    }
     
     private Case caseALaPosition(Point p) {
         Case retour = null;

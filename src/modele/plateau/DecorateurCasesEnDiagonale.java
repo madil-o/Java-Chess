@@ -1,6 +1,8 @@
 package modele.plateau;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import modele.jeu.Piece;
 
 public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
@@ -12,7 +14,12 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
     }
 
     public ArrayList<Case> getMesCasesAccessibles() {
-        // TODO
+        ArrayList<Case> tab = new ArrayList<>();
+        System.out.print("jedoiaezajejaozejao");
+        List<Direction> dirs = Arrays.asList(Direction.HautGauche,
+                                             Direction.HautDroite,
+                                             Direction.BasGauche,
+                                             Direction.BasDroite);
         return null;
     }
 }

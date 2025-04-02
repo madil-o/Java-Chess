@@ -1,9 +1,6 @@
 package modele.jeu;
 
-import modele.plateau.Case;
 import modele.plateau.Plateau;
-
-import javax.print.event.PrintJobEvent;
 
 public class Jeu extends Thread{
     private Plateau plateau;

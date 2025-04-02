@@ -1,7 +1,6 @@
 
 import VueControleur.VueControleur;
 import modele.jeu.Jeu;
-import modele.plateau.Plateau;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
