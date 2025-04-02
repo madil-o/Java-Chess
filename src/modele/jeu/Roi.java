@@ -7,13 +7,11 @@ package modele.jeu;
 
 import modele.plateau.*;
 
-import java.util.ArrayList;
-
 
 public class Roi extends Piece
 {
-    public Roi(Plateau _plateau) {
-        super(_plateau);
+    public Roi(Plateau _plateau, boolean _couleur) {
+        super(_plateau, _couleur);
         casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null));
 
         // le décorateur récupère les cases en diagonale et en ligne

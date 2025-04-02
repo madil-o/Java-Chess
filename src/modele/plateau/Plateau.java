@@ -44,7 +44,7 @@ public class Plateau extends Observable {
     }
 
     public void placerPieces() {
-        Roi roi = new Roi(this);
+        Roi roi = new Roi(this, true);
         Case cR = grilleCases[4][7];
         roi.allerSurCase(cR);
 

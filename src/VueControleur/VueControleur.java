@@ -7,13 +7,11 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-
-
 import modele.jeu.Coup;
 import modele.jeu.Jeu;
-import modele.plateau.Case;
 import modele.jeu.Piece;
 import modele.jeu.Roi;
+import modele.plateau.Case;
 import modele.plateau.Plateau;
 
 
