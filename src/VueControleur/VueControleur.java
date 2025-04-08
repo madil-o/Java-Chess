@@ -95,7 +95,12 @@ public class VueControleur extends JFrame implements Observer {
                 jlab.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-
+                        boolean couleurJoueurActuel = jeu.isTourBlanc();
+                        Case caseCliquee = plateau.getCases()[xx][yy];
+                        
+                        if (caseCliquee.getPiece() != null && caseCliquee.getPiece().couleur != couleurJoueurActuel) {
+                            return;
+                        }
                         if (caseClic1 == null) {
                             caseClic1 = plateau.getCases()[xx][yy];
                         } else {

@@ -7,6 +7,7 @@ public class Jeu extends Thread{
     private Joueur j1;
     private Joueur j2;
     protected Coup coupRecu;
+    private boolean tourBlanc = true;
 
     private Roi roi;
 
@@ -19,6 +20,10 @@ public class Jeu extends Thread{
 
         start();
 
+    }
+
+    public boolean isTourBlanc() {
+        return tourBlanc;
     }
 
     public Plateau getPlateau() {
@@ -55,12 +60,11 @@ public class Jeu extends Thread{
     }
 
     public void jouerPartie() {
-
         while(true) {
-            Coup c = j1.getCoup();
+            Coup c = (tourBlanc) ? j1.getCoup() : j2.getCoup();
             appliquerCoup(c);
+            tourBlanc = !tourBlanc;
         }
-
     }
 
 
