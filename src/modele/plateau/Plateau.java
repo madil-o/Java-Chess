@@ -77,7 +77,6 @@ public class Plateau extends Observable {
     }
 
     public Case appliquerDirection(Direction d, Case c){
-        //Point case_suiv = new Point();
         Point case_suiv = new Point(map.get(c).x + d.dx, map.get(c).y + d.dy);
         return contenuDansGrille(case_suiv) ? grilleCases[case_suiv.x][case_suiv.y] : null;
     }

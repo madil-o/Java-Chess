@@ -16,11 +16,12 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
     @Override
     public ArrayList<Case> getMesCasesAccessibles() {
         ArrayList<Case> accessible = new ArrayList<>();
-        System.out.print("jedoiaezajejaozejao");
-        List<Direction> dirs = Arrays.asList(Direction.HautGauche,
-                                             Direction.HautDroite,
-                                             Direction.BasGauche,
-                                             Direction.BasDroite);
+        List<Direction> dirs = Arrays.asList(
+            Direction.HautGauche,
+            Direction.HautDroite,
+            Direction.BasGauche,
+            Direction.BasDroite
+        );
         for (Direction dir : dirs) {
             Case nextCase = plateau.appliquerDirection(dir, piece.getCase());
             if (nextCase != null) {

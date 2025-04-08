@@ -42,7 +42,12 @@ public class Jeu extends Thread{
 
 
     public void appliquerCoup(Coup coup) {
-        plateau.deplacerPiece(coup.dep, coup.arr);
+        Piece piece = coup.dep.getPiece();
+        if (piece != null && piece.casesAccessibles.getCasesAccessibles().contains(coup.arr)) {
+            plateau.deplacerPiece(coup.dep, coup.arr);
+        } else {
+            System.out.println("Coup invalide !");
+        }
     }
 
     public void run() {
