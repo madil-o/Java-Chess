@@ -13,13 +13,23 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
         super(_baseDecorateur, _plateau, _piece);
     }
 
+    @Override
     public ArrayList<Case> getMesCasesAccessibles() {
-        ArrayList<Case> tab = new ArrayList<>();
+        ArrayList<Case> accessible = new ArrayList<>();
         System.out.print("jedoiaezajejaozejao");
         List<Direction> dirs = Arrays.asList(Direction.HautGauche,
                                              Direction.HautDroite,
                                              Direction.BasGauche,
                                              Direction.BasDroite);
-        return null;
+        for (Direction dir : dirs) {
+            Case nextCase = plateau.appliquerDirection(dir, piece.getCase());
+            if (nextCase != null) {
+                Piece target = nextCase.getPiece();
+                if (target == null || target.couleur != piece.couleur) {
+                    accessible.add(nextCase);
+                }
+            }
+        }
+        return accessible;   
     }
 }

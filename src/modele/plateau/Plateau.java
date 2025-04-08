@@ -76,16 +76,10 @@ public class Plateau extends Observable {
         return p.x >= 0 && p.x < SIZE_X && p.y >= 0 && p.y < SIZE_Y;
     }
 
-    private Case appliquerDirection(Direction d, Case c){
-        Point case_suiv = new Point();
-        case_suiv.x = map.get(c).x + d.dx;
-        case_suiv.y = map.get(c).y + d.dy;
-        if (contenuDansGrille(case_suiv)) {
-            Case retour = null;
-            retour = grilleCases[case_suiv.x][case_suiv.y];
-            return retour;
-        }
-        return c;
+    public Case appliquerDirection(Direction d, Case c){
+        //Point case_suiv = new Point();
+        Point case_suiv = new Point(map.get(c).x + d.dx, map.get(c).y + d.dy);
+        return contenuDansGrille(case_suiv) ? grilleCases[case_suiv.x][case_suiv.y] : null;
     }
     
     private Case caseALaPosition(Point p) {

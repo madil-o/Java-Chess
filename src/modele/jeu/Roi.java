@@ -17,8 +17,8 @@ public class Roi extends Piece
                                                                                     _plateau, this),_plateau, this);
 
         // le décorateur récupère les cases en diagonale et en ligne
-        ArrayList<Case> lst = new ArrayList<>();
-        lst = casesAccessibles.getCasesAccessibles();
+        //ArrayList<Case> lst = new ArrayList<>();
+        //lst = casesAccessibles.getCasesAccessibles();
     }
 
 
