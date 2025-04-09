@@ -32,6 +32,9 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
                     if (target == null || target.couleur != piece.couleur) {
                         accessible.add(nextCase);
                     }
+                    else if (target.couleur == piece.couleur){
+                        break;
+                    }
                 }
             }
         }
