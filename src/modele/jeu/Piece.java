@@ -33,10 +33,4 @@ public abstract class Piece {
     public Case getCase() {
         return c;
     }
-
-
-
-
-
-
 }

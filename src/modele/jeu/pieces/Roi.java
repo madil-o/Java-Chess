@@ -5,10 +5,8 @@
  */
 package modele.jeu.pieces;
 
-import java.util.ArrayList;
-
-import modele.plateau.*;
 import modele.jeu.Piece;
+import modele.plateau.*;
 
 
 public class Roi extends Piece
@@ -16,12 +14,11 @@ public class Roi extends Piece
     public Roi(Plateau _plateau, boolean _couleur) {
         super(_plateau, _couleur);
         casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null,
-                                                                                    _plateau, this),_plateau, this);
+                                                                                    _plateau, this, 1),
+                                                                                    _plateau, this, 1);
 
         // le décorateur récupère les cases en diagonale et en ligne
         //ArrayList<Case> lst = new ArrayList<>();
         //lst = casesAccessibles.getCasesAccessibles();
     }
-
-
 }

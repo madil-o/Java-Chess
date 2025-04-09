@@ -3,15 +3,15 @@ package modele.plateau;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import modele.jeu.Piece;
 
 public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
 
     public DecorateurCasesEnDiagonale(DecorateurCasesAccessibles _baseDecorateur,
                                       Plateau _plateau,
-                                      Piece _piece) {
-        super(_baseDecorateur, _plateau, _piece);
+                                      Piece _piece,
+                                      int _distance_max) {
+        super(_baseDecorateur, _plateau, _piece, _distance_max);
     }
 
     @Override
@@ -24,14 +24,17 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
             Direction.BasDroite
         );
         for (Direction dir : dirs) {
-            Case nextCase = plateau.appliquerDirection(dir, piece.getCase());
-            if (nextCase != null) {
-                Piece target = nextCase.getPiece();
-                if (target == null || target.couleur != piece.couleur) {
-                    accessible.add(nextCase);
+            Case nextCase = piece.getCase();
+            for (int i = 0; i < distance_max; i++){
+                nextCase = plateau.appliquerDirection(dir, nextCase);
+                if (nextCase != null) {
+                    Piece target = nextCase.getPiece();
+                    if (target == null || target.couleur != piece.couleur) {
+                        accessible.add(nextCase);
+                    }
                 }
             }
         }
-        return accessible;   
+        return accessible;
     }
 }
