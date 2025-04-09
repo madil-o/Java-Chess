@@ -16,7 +16,6 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
 
     @Override
     public ArrayList<Case> getMesCasesAccessibles() {
-        // TODO
         ArrayList<Case> accessible = new ArrayList<>();
         List<Direction> dirs = Arrays.asList(Direction.Haut, Direction.Bas, Direction.Gauche, Direction.Droite);
         for (Direction dir : dirs) {

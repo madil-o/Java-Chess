@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package modele.jeu;
+package modele.jeu.pieces;
 
 import java.util.ArrayList;
+
 import modele.plateau.*;
+import modele.jeu.Piece;
 
 
 public class Roi extends Piece

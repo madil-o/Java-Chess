@@ -1,5 +1,7 @@
 package modele.jeu;
 
+import modele.jeu.Piece;
+import modele.jeu.pieces.Roi;
 import modele.plateau.Plateau;
 
 public class Jeu extends Thread{

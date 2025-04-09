@@ -7,7 +7,8 @@ package modele.plateau;
 
 
 import modele.jeu.Piece;
-import modele.jeu.Roi;
+import modele.jeu.pieces.Roi;
+import modele.jeu.pieces.Tour;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -44,9 +45,13 @@ public class Plateau extends Observable {
     }
 
     public void placerPieces() {
-        Roi roi = new Roi(this, true);
-        Case cR = grilleCases[4][7];
-        roi.allerSurCase(cR);
+        Roi roiBlanc = new Roi(this, true);
+        roiBlanc.allerSurCase(grilleCases[4][7]);
+        
+        Tour tourBlanche1 = new Tour(this, true);
+        tourBlanche1.allerSurCase(grilleCases[0][7]);
+        Tour tourBlanche2 = new Tour(this, true);
+        tourBlanche2.allerSurCase(grilleCases[7][7]);
 
         setChanged();
         notifyObservers();
@@ -77,7 +82,9 @@ public class Plateau extends Observable {
     }
 
     public Case appliquerDirection(Direction d, Case c){
+        if (c == null) return null;
         Point case_suiv = new Point(map.get(c).x + d.dx, map.get(c).y + d.dy);
+        //if (case_suiv == null) return null;
         return contenuDansGrille(case_suiv) ? grilleCases[case_suiv.x][case_suiv.y] : null;
     }
     

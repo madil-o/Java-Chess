@@ -3,6 +3,7 @@ package modele.plateau;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import modele.jeu.Piece;
 
 public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {

@@ -10,7 +10,7 @@ import javax.swing.*;
 import modele.jeu.Coup;
 import modele.jeu.Jeu;
 import modele.jeu.Piece;
-import modele.jeu.Roi;
+import modele.jeu.pieces.*;
 import modele.plateau.Case;
 import modele.plateau.Plateau;
 
@@ -27,7 +27,8 @@ public class VueControleur extends JFrame implements Observer {
     private final int sizeY;
     private static final int pxCase = 50; // nombre de pixel par case
     // icones affichées dans la grille
-    private ImageIcon icoRoi;
+    private ImageIcon icoRoiB;
+    private ImageIcon icoTourB;
 
     private Case caseClic1; // mémorisation des cases cliquées
     private Case caseClic2;
@@ -55,7 +56,8 @@ public class VueControleur extends JFrame implements Observer {
 
 
     private void chargerLesIcones() {
-        icoRoi = chargerIcone("Images/wK.png");
+        icoRoiB = chargerIcone("Images/wK.png");
+        icoTourB = chargerIcone("Images/wR.png");
 
 
     }
@@ -97,18 +99,27 @@ public class VueControleur extends JFrame implements Observer {
                     public void mouseClicked(MouseEvent e) {
                         boolean couleurJoueurActuel = jeu.isTourBlanc();
                         Case caseCliquee = plateau.getCases()[xx][yy];
-                        
+
                         if (caseCliquee.getPiece() != null && caseCliquee.getPiece().couleur != couleurJoueurActuel) {
                             return;
                         }
-                        if (caseClic1 == null) {
+                        if (caseClic1 != null && caseClic1.equals(plateau.getCases()[xx][yy])) {
+                            caseClic1 = null;
+                            if ((yy%2 == 0 && xx%2 == 0) || (yy%2 != 0 && xx%2 != 0)) {
+                                tabJLabel[xx][yy].setBackground(new Color(50, 50, 110));
+                            } else {
+                                tabJLabel[xx][yy].setBackground(new Color(150, 150, 210));
+                            }
+                        } else if (caseClic1 == null) {
                             caseClic1 = plateau.getCases()[xx][yy];
+                            tabJLabel[xx][yy].setBackground(Color.YELLOW);
                         } else {
                             caseClic2 = plateau.getCases()[xx][yy];
                             jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
                             caseClic1 = null;
                             caseClic2 = null;
                         }
+                        
 
                     }
                 });
@@ -133,10 +144,14 @@ public class VueControleur extends JFrame implements Observer {
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
      */
     private void mettreAJourAffichage() {
-
+        setTitle("Jeu d'Échecs - Tour des " + (jeu.isTourBlanc() ? "Blancs" : "Noirs"));
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
-
+                if ((x + y) % 2 == 0) {
+                    tabJLabel[x][y].setBackground(new Color(50, 50, 110));
+                } else {
+                    tabJLabel[x][y].setBackground(new Color(150, 150, 210));
+                }
                 Case c = plateau.getCases()[x][y];
 
                 if (c != null) {
@@ -146,8 +161,11 @@ public class VueControleur extends JFrame implements Observer {
                     if (e!= null) {
                         if (c.getPiece() instanceof Roi) {
 
-                            tabJLabel[x][y].setIcon(icoRoi);
+                            tabJLabel[x][y].setIcon(icoRoiB);
 
+                        }
+                        else if (c.getPiece() instanceof Tour) {
+                            tabJLabel[x][y].setIcon(icoTourB);
                         }
                     } else {
                         tabJLabel[x][y].setIcon(null);

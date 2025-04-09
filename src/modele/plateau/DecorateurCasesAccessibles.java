@@ -1,6 +1,7 @@
 package modele.plateau;
 
 import java.util.ArrayList;
+
 import modele.jeu.Piece;
 
 public abstract class DecorateurCasesAccessibles {
