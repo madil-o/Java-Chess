@@ -28,6 +28,7 @@ public class VueControleur extends JFrame implements Observer {
     private static final int pxCase = 50; // nombre de pixel par case
     // icones affichées dans la grille
     private ImageIcon icoRoiB;
+    private ImageIcon icoRoiN;
     private ImageIcon icoTourB;
 
     private Case caseClic1; // mémorisation des cases cliquées
@@ -57,7 +58,9 @@ public class VueControleur extends JFrame implements Observer {
 
     private void chargerLesIcones() {
         icoRoiB = chargerIcone("Images/wK.png");
+        icoRoiN = chargerIcone("Images/bK.png");
         icoTourB = chargerIcone("Images/wR.png");
+
 
 
     }
@@ -99,28 +102,39 @@ public class VueControleur extends JFrame implements Observer {
                     public void mouseClicked(MouseEvent e) {
                         boolean couleurJoueurActuel = jeu.isTourBlanc();
                         Case caseCliquee = plateau.getCases()[xx][yy];
-
+                
+                        // Bloque les clics sur pièces adverses
                         if (caseCliquee.getPiece() != null && caseCliquee.getPiece().couleur != couleurJoueurActuel) {
                             return;
                         }
-                        if (caseClic1 != null && caseClic1.equals(plateau.getCases()[xx][yy])) {
+                
+                        if (caseClic1 != null && caseClic1.equals(caseCliquee)) {
+                            // Désélection si clic sur la même case
                             caseClic1 = null;
-                            if ((yy%2 == 0 && xx%2 == 0) || (yy%2 != 0 && xx%2 != 0)) {
-                                tabJLabel[xx][yy].setBackground(new Color(50, 50, 110));
-                            } else {
-                                tabJLabel[xx][yy].setBackground(new Color(150, 150, 210));
-                            }
-                        } else if (caseClic1 == null) {
-                            caseClic1 = plateau.getCases()[xx][yy];
+                            mettreAJourAffichage();
+                        } 
+                        else if (caseClic1 != null && caseCliquee.getPiece() != null) {
+                            // Changement de sélection si nouvelle pièce alliée
+                            caseClic1 = caseCliquee;
+                            mettreAJourAffichage();  // Réinitialise toutes les couleurs
+                            tabJLabel[xx][yy].setBackground(Color.YELLOW); // Met en surbrillance la nouvelle
+                        } 
+                        else if (caseClic1 == null) {
+                            // Sélection initiale
+                            caseClic1 = caseCliquee;
                             tabJLabel[xx][yy].setBackground(Color.YELLOW);
-                        } else {
-                            caseClic2 = plateau.getCases()[xx][yy];
+                        } 
+                        else {
+                            // Tentative de déplacement
+                            caseClic2 = caseCliquee;
                             jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
-                            caseClic1 = null;
-                            caseClic2 = null;
+                            
+                            if (jeu.isTourBlanc() != couleurJoueurActuel) { // Coup valide
+                                caseClic1 = null;
+                                caseClic2 = null;
+                            }
+                            mettreAJourAffichage();
                         }
-                        
-
                     }
                 });
 
@@ -160,9 +174,7 @@ public class VueControleur extends JFrame implements Observer {
 
                     if (e!= null) {
                         if (c.getPiece() instanceof Roi) {
-
-                            tabJLabel[x][y].setIcon(icoRoiB);
-
+                            tabJLabel[x][y].setIcon(e.couleur ? icoRoiB : icoRoiN);
                         }
                         else if (c.getPiece() instanceof Tour) {
                             tabJLabel[x][y].setIcon(icoTourB);

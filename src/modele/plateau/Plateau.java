@@ -47,6 +47,8 @@ public class Plateau extends Observable {
     public void placerPieces() {
         Roi roiBlanc = new Roi(this, true);
         roiBlanc.allerSurCase(grilleCases[4][7]);
+        Roi roiNoir = new Roi(this, false);
+        roiNoir.allerSurCase(grilleCases[4][0]);
         
         Tour tourBlanche1 = new Tour(this, true);
         tourBlanche1.allerSurCase(grilleCases[0][7]);
@@ -84,7 +86,6 @@ public class Plateau extends Observable {
     public Case appliquerDirection(Direction d, Case c){
         if (c == null) return null;
         Point case_suiv = new Point(map.get(c).x + d.dx, map.get(c).y + d.dy);
-        //if (case_suiv == null) return null;
         return contenuDansGrille(case_suiv) ? grilleCases[case_suiv.x][case_suiv.y] : null;
     }
     

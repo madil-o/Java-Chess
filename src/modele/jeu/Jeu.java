@@ -24,7 +24,7 @@ public class Jeu extends Thread{
 
     }
 
-    public boolean isTourBlanc() {
+    public synchronized boolean isTourBlanc() {
         return tourBlanc;
     }
 
@@ -48,12 +48,15 @@ public class Jeu extends Thread{
     }
 
 
-    public void appliquerCoup(Coup coup) {
+    public boolean appliquerCoup(Coup coup) {
         Piece piece = coup.dep.getPiece();
         if (piece != null && piece.casesAccessibles.getCasesAccessibles().contains(coup.arr)) {
             plateau.deplacerPiece(coup.dep, coup.arr);
+            return true;
+
         } else {
             System.out.println("Coup invalide !");
+            return false;
         }
     }
 
@@ -64,8 +67,8 @@ public class Jeu extends Thread{
     public void jouerPartie() {
         while(true) {
             Coup c = (tourBlanc) ? j1.getCoup() : j2.getCoup();
-            appliquerCoup(c);
-            tourBlanc = !tourBlanc;
+            if(appliquerCoup(c))
+                tourBlanc = !tourBlanc;
         }
     }
 
