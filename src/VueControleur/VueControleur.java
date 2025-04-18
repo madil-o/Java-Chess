@@ -27,9 +27,18 @@ public class VueControleur extends JFrame implements Observer {
     private final int sizeY;
     private static final int pxCase = 50; // nombre de pixel par case
     // icones affichées dans la grille
-    private ImageIcon icoRoiB;
-    private ImageIcon icoRoiN;
-    private ImageIcon icoTourB;
+    private ImageIcon icoRoiB, 
+                      icoRoiN, 
+                      icoTourB, 
+                      icoTourN,
+                      icoFouB, 
+                      icoFouN, 
+                      icoCavalierB, 
+                      icoCavalierN, 
+                      icoReineB, 
+                      icoReineN, 
+                      icoPionB, 
+                      icoPionN;
 
     private Case caseClic1; // mémorisation des cases cliquées
     private Case caseClic2;
@@ -60,9 +69,15 @@ public class VueControleur extends JFrame implements Observer {
         icoRoiB = chargerIcone("Images/wK.png");
         icoRoiN = chargerIcone("Images/bK.png");
         icoTourB = chargerIcone("Images/wR.png");
-
-
-
+        icoTourN = chargerIcone("Images/bR.png");
+        icoFouB = chargerIcone("Images/wB.png");
+        icoFouN = chargerIcone("Images/bB.png");
+        icoCavalierB = chargerIcone("Images/wN.png");
+        icoCavalierN = chargerIcone("Images/bN.png");
+        icoReineB = chargerIcone("Images/wQ.png");
+        icoReineN = chargerIcone("Images/bQ.png");
+        icoPionB = chargerIcone("Images/wP.png");
+        icoPionN = chargerIcone("Images/bP.png");
     }
 
     private ImageIcon chargerIcone(String urlIcone) {
@@ -158,6 +173,11 @@ public class VueControleur extends JFrame implements Observer {
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
      */
     private void mettreAJourAffichage() {
+        for (int x = 0; x < sizeX; x++) {
+            for (int y = 0; y < sizeY; y++) {
+                tabJLabel[x][y].setIcon(null); // <-- Reset
+            }
+        }
         setTitle("Jeu d'Échecs - Tour des " + (jeu.isTourBlanc() ? "Blancs" : "Noirs"));
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
@@ -173,18 +193,19 @@ public class VueControleur extends JFrame implements Observer {
                     Piece e = c.getPiece();
 
                     if (e!= null) {
-                        if (c.getPiece() instanceof Roi) {
+                        if (e instanceof Roi) {
                             tabJLabel[x][y].setIcon(e.couleur ? icoRoiB : icoRoiN);
-                        }
-                        else if (c.getPiece() instanceof Tour) {
-                            tabJLabel[x][y].setIcon(icoTourB);
-                        }
-                    } else {
-                        tabJLabel[x][y].setIcon(null);
-
-                    }
-
-
+                        } else if (e instanceof Tour) {
+                            tabJLabel[x][y].setIcon(e.couleur ? icoTourB : icoTourN);
+                        // } else if (e instanceof Fou) {
+                        //     tabJLabel[x][y].setIcon(e.couleur ? icoFouB : icoFouN);
+                        } else if (e instanceof Cavalier) {
+                            tabJLabel[x][y].setIcon(e.couleur ? icoCavalierB : icoCavalierN);
+                        }// } else if (e instanceof Reine) {
+                        //     tabJLabel[x][y].setIcon(e.couleur ? icoReineB : icoReineN);
+                        // } else if (e instanceof Pion) {
+                        //     tabJLabel[x][y].setIcon(e.couleur ? icoPionB : icoPionN);
+                    }// }
                 }
 
             }

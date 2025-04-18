@@ -7,8 +7,7 @@ package modele.plateau;
 
 
 import modele.jeu.Piece;
-import modele.jeu.pieces.Roi;
-import modele.jeu.pieces.Tour;
+import modele.jeu.pieces.*;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -21,7 +20,7 @@ public class Plateau extends Observable {
     public static final int SIZE_Y = 8;
 
 
-    private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
+    private HashMap<Case, Point> map = new  HashMap<>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleCases = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
 
     public Plateau() {
@@ -30,6 +29,10 @@ public class Plateau extends Observable {
 
     public Case[][] getCases() {
         return grilleCases;
+    }
+
+    public HashMap<Case, Point> getMap() {
+        return map;
     }
 
     private void initPlateauVide() {
@@ -45,19 +48,34 @@ public class Plateau extends Observable {
     }
 
     public void placerPieces() {
-        Roi roiBlanc = new Roi(this, true);
-        roiBlanc.allerSurCase(grilleCases[4][7]);
-        Roi roiNoir = new Roi(this, false);
-        roiNoir.allerSurCase(grilleCases[4][0]);
-        
-        Tour tourBlanche1 = new Tour(this, true);
-        tourBlanche1.allerSurCase(grilleCases[0][7]);
-        Tour tourBlanche2 = new Tour(this, true);
-        tourBlanche2.allerSurCase(grilleCases[7][7]);
+        // Pièces blanches
+        new Tour(this, true).allerSurCase(grilleCases[0][7]);
+        new Cavalier(this, true).allerSurCase(grilleCases[1][7]);
+        // new Fou(this, true).allerSurCase(grilleCases[2][7]);
+        // new Reine(this, true).allerSurCase(grilleCases[3][7]);
+        new Roi(this, true).allerSurCase(grilleCases[4][7]);
+        // new Fou(this, true).allerSurCase(grilleCases[5][7]);
+        new Cavalier(this, true).allerSurCase(grilleCases[6][7]);
+        new Tour(this, true).allerSurCase(grilleCases[7][7]);
+        // for (int x = 0; x < SIZE_X; x++) {
+        //     new Pion(this, true).allerSurCase(grilleCases[x][6]);
+        // }
+
+        // Pièces noires
+        new Tour(this, false).allerSurCase(grilleCases[0][0]);
+        new Cavalier(this, false).allerSurCase(grilleCases[1][0]);
+        // new Fou(this, false).allerSurCase(grilleCases[2][0]);
+        // new Reine(this, false).allerSurCase(grilleCases[3][0]);
+        new Roi(this, false).allerSurCase(grilleCases[4][0]);
+        // new Fou(this, false).allerSurCase(grilleCases[5][0]);
+        new Cavalier(this, false).allerSurCase(grilleCases[6][0]);
+        new Tour(this, false).allerSurCase(grilleCases[7][0]);
+        // for (int x = 0; x < SIZE_X; x++) {
+        //     new Pion(this, false).allerSurCase(grilleCases[x][1]);
+        // }
 
         setChanged();
         notifyObservers();
-
     }
 
     public void arriverCase(Case c, Piece p) {
@@ -79,7 +97,7 @@ public class Plateau extends Observable {
 
     /** Indique si p est contenu dans la grille
      */
-    private boolean contenuDansGrille(Point p) {
+    public boolean contenuDansGrille(Point p) {
         return p.x >= 0 && p.x < SIZE_X && p.y >= 0 && p.y < SIZE_Y;
     }
 

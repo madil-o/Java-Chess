@@ -6,11 +6,14 @@ import java.util.List;
 import modele.jeu.Piece;
 
 public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
+    int distance_max;
+
     public DecorateurCasesEnLigne(DecorateurCasesAccessibles _baseDecorateur,
                                       Plateau _plateau,
                                       Piece _piece,
                                       int _distance_max) {
-        super(_baseDecorateur, _plateau, _piece, _distance_max);
+        super(_baseDecorateur, _plateau, _piece);
+        distance_max = _distance_max;
     }
 
 

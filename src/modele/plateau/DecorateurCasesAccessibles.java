@@ -7,18 +7,15 @@ public abstract class DecorateurCasesAccessibles {
 
     Plateau plateau;
     Piece piece;
-    int distance_max;
 
     private DecorateurCasesAccessibles base;
 
     public DecorateurCasesAccessibles(DecorateurCasesAccessibles _baseDecorateur,
                                       Plateau _plateau,
-                                      Piece _piece,
-                                      int _distance_max) {
+                                      Piece _piece) {
         base = _baseDecorateur;
         plateau = _plateau;
         piece = _piece;
-        distance_max = _distance_max;
     }
 
     public ArrayList<Case> getCasesAccessibles() {

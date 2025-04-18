@@ -1,7 +1,5 @@
 package modele.jeu;
 
-import modele.jeu.Piece;
-import modele.jeu.pieces.Roi;
 import modele.plateau.Plateau;
 
 public class Jeu extends Thread{
@@ -10,8 +8,6 @@ public class Jeu extends Thread{
     private Joueur j2;
     protected Coup coupRecu;
     private boolean tourBlanc = true;
-
-    private Roi roi;
 
     public Jeu() {
         plateau = new Plateau();
@@ -53,13 +49,12 @@ public class Jeu extends Thread{
         if (piece != null && piece.casesAccessibles.getCasesAccessibles().contains(coup.arr)) {
             plateau.deplacerPiece(coup.dep, coup.arr);
             return true;
-
-        } else {
-            System.out.println("Coup invalide !");
-            return false;
         }
+        System.out.println("Coup invalide !");
+        return false;
     }
 
+    @Override
     public void run() {
         jouerPartie();
     }
