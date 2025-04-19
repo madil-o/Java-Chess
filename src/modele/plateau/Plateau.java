@@ -47,6 +47,17 @@ public class Plateau extends Observable {
 
     }
 
+    public void reinitialiser() {
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                grilleCases[x][y].quitterLaCase();
+            }
+        }
+        piecesMortesBlanches.clear();
+        piecesMortesNoires.clear();
+        initPlateauVide();
+    }
+
     public void placerPieces() {
         // Pièces blanches
         new Tour(this, true).allerSurCase(grilleCases[0][7]);
@@ -83,7 +94,7 @@ public class Plateau extends Observable {
         c.p = p;
 
     }
-    
+
     public void deplacerPiece(Case c1, Case c2) {
         if (c1.p != null) {
             Piece piece = c1.p;
@@ -93,6 +104,7 @@ public class Plateau extends Observable {
             }
             piece.allerSurCase(c2);
         }
+
         setChanged();
         notifyObservers();
     }
@@ -157,5 +169,61 @@ public class Plateau extends Observable {
     public ArrayList<Piece> getPiecesMortesNoires() {
         return piecesMortesNoires;
     }
+
+    private Case trouverRoi(boolean couleurRoi) {
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case c = grilleCases[x][y];
+                if (c.getPiece() != null && c.getPiece() instanceof Roi && c.getPiece().couleur == couleurRoi) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean estRoiEnEchec(boolean couleurRoi) {
+        Case roiCase = trouverRoi(couleurRoi);
+        if (roiCase == null) return false;        
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case c = grilleCases[x][y];
+                if (c.getPiece() != null && c.getPiece().couleur != couleurRoi) {
+                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean estEchecEtMat(boolean couleurRoi) {
+        if (!estRoiEnEchec(couleurRoi)) {
+            return false;
+        }    
+        Case roiCase = trouverRoi(couleurRoi);        
+        for (Direction d : Direction.values()) {
+            Case caseSecuritaire = appliquerDirection(d, roiCase);
+            if (caseSecuritaire != null && caseSecuritaire.getPiece() == null) {
+                if (!estRoiEnEchec(couleurRoi)) {
+                    return false;
+                }
+            }
+        }    
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case c = grilleCases[x][y];
+                if (c.getPiece() != null && c.getPiece().couleur == couleurRoi) {
+                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+    
 
 }

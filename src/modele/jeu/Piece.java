@@ -37,4 +37,8 @@ public abstract class Piece {
     public void setCase(Case _c) {
         c = _c;
     }
+
+    public DecorateurCasesAccessibles getCasesAccessibles() {
+        return casesAccessibles;
+    }
 }

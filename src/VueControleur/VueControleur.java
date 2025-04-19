@@ -123,7 +123,7 @@ public class VueControleur extends JFrame implements Observer {
                                 caseClic1 = clic;
                                 tabJLabel[xx][yy].setBackground(Color.YELLOW);
                             } else {
-                                System.out.println("Clique invalide : sélectionnez d'abord une de vos pièces.");
+                                System.out.println("Clic invalide : sélectionnez d'abord une de vos pièces.");
                             }
                         } else {
                             // 2e clic : on envoie le coup, qu'il soit valide ou pas
@@ -134,7 +134,6 @@ public class VueControleur extends JFrame implements Observer {
                             caseClic1 = null;
                             caseClic2 = null;
                 
-                            // on rafraîchit l'affichage
                             mettreAJourAffichage();
                         }
                     }
@@ -160,7 +159,7 @@ public class VueControleur extends JFrame implements Observer {
     private void mettreAJourAffichage() {
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
-                tabJLabel[x][y].setIcon(null); // <-- Reset
+                tabJLabel[x][y].setIcon(null);
             }
         }
         setTitle("Jeu d'Échecs - Tour des " + (jeu.isTourBlanc() ? "Blancs" : "Noirs"));
@@ -197,11 +196,19 @@ public class VueControleur extends JFrame implements Observer {
 
             }
         }
+        if (plateau.estEchecEtMat(false)) {
+            afficherVictoire(true);
+        } else if (plateau.estEchecEtMat(true)) {
+            afficherVictoire(false);
+        } else {
+            System.out.println("C'est le tour des " + (jeu.isTourBlanc() ? "blancs" : "noirs"));
+        }
     }
 
     @Override
     public void update(Observable o, Object arg) {
         mettreAJourAffichage();
+        
         /*
 
         // récupérer le processus graphique pour rafraichir
@@ -217,4 +224,26 @@ public class VueControleur extends JFrame implements Observer {
         */
 
     }
+
+    public void afficherVictoire(boolean couleurGagnante) {
+        String message = couleurGagnante ? "Les pièces blanches ont gagné !" : "Les pièces noires ont gagné !";
+        
+        JOptionPane.showMessageDialog(null, message, "Victoire", JOptionPane.INFORMATION_MESSAGE);
+        
+        int reponse = JOptionPane.showConfirmDialog(null, "Voulez-vous recommencer une nouvelle partie ?", 
+                                                    "Nouvelle Partie", JOptionPane.YES_NO_OPTION);
+        if (reponse == JOptionPane.YES_OPTION) {
+            recommencerPartie();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    public void recommencerPartie() {
+        plateau.reinitialiser();
+        jeu.placerPieces();
+        mettreAJourAffichage();
+    }
+    
+    
 }

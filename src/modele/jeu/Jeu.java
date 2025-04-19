@@ -39,11 +39,11 @@ public class Jeu extends Thread{
 
     public void envoyerCoup(Coup c) {
         coupRecu = c;
-
+        
         synchronized (this) {
             notify();
         }
-        System.out.println("hello");
+        //System.out.println("hello");
     }
 
 
