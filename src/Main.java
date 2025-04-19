@@ -12,7 +12,6 @@ import modele.jeu.Jeu;
 public class Main {
     public static void main(String[] args) {
         Jeu jeu = new Jeu();
-        
         VueControleur vc = new VueControleur(jeu);
         vc.setVisible(true);
 

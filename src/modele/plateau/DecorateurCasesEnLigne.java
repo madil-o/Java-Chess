@@ -25,15 +25,18 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
             Case nextCase = piece.getCase();
             for (int i = 0; i < distance_max; i++){
                 nextCase = plateau.appliquerDirection(dir, nextCase);
-                if (nextCase == null) break;
-                Piece target = nextCase.getPiece();
-                if (target != null) {
-                    if (target.couleur != piece.couleur) {
+                if (nextCase != null) {
+                    Piece target = nextCase.getPiece();
+                    if (target == null) {
                         accessible.add(nextCase);
                     }
-                    break;
-                } else {
-                    accessible.add(nextCase);
+                    else if (target.couleur != piece.couleur){
+                        accessible.add(nextCase);
+                        break;
+                    }
+                    else {
+                        break;
+                    }
                 }
             }
         }

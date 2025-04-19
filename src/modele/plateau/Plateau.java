@@ -86,8 +86,12 @@ public class Plateau extends Observable {
 
     public void deplacerPiece(Case c1, Case c2) {
         if (c1.p != null) {
+            Piece target = c2.getPiece();
+            if (target != null){
+                ajouterPieceMorte(target);
+                System.out.println("manger");
+            }
             c1.p.allerSurCase(c2);
-
         }
         setChanged();
         notifyObservers();

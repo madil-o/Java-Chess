@@ -119,7 +119,8 @@ public class VueControleur extends JFrame implements Observer {
                         Case caseCliquee = plateau.getCases()[xx][yy];
                 
                         // Bloque les clics sur pièces adverses
-                        if (caseCliquee.getPiece() != null && caseCliquee.getPiece().couleur != couleurJoueurActuel) {
+                        if (caseClic1.getPiece() != null && caseClic1.getPiece().couleur != couleurJoueurActuel) {
+                            System.out.println("Coup invalide !");
                             return;
                         }
                 
