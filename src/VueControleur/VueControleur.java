@@ -201,11 +201,13 @@ public class VueControleur extends JFrame implements Observer {
                         //     tabJLabel[x][y].setIcon(e.couleur ? icoFouB : icoFouN);
                         } else if (e instanceof Cavalier) {
                             tabJLabel[x][y].setIcon(e.couleur ? icoCavalierB : icoCavalierN);
-                        }// } else if (e instanceof Reine) {
+                        // } else if (e instanceof Reine) {
                         //     tabJLabel[x][y].setIcon(e.couleur ? icoReineB : icoReineN);
-                        // } else if (e instanceof Pion) {
-                        //     tabJLabel[x][y].setIcon(e.couleur ? icoPionB : icoPionN);
-                    }// }
+                        } else if (e instanceof Pion) {
+                            tabJLabel[x][y].setIcon(e.couleur ? icoPionB : icoPionN);
+                        }
+                    }
+                    
                 }
 
             }

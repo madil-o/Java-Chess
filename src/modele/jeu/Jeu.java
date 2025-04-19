@@ -29,7 +29,6 @@ public class Jeu extends Thread{
     }
 
     public void placerPieces() {
-
         plateau.placerPieces();
     }
 

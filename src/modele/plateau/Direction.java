@@ -10,8 +10,8 @@ package modele.plateau;
  *
  */
 public enum Direction {
-    Haut(-1, 0), Bas (1, 0),Gauche(0, -1), Droite(0, 1),
-    HautGauche(-1, -1), HautDroite(-1, 1), BasGauche(1, -1), BasDroite(1, 1);
+    Haut(0, -1), Bas (0, 1),Gauche(-1, 0), Droite(1, 0),
+    HautGauche(-1, -1), HautDroite(1, -1), BasGauche(-1, 1), BasDroite(1, 1);
     public final int dx;
     public final int dy;
 

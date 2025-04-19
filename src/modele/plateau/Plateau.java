@@ -6,12 +6,11 @@
 package modele.plateau;
 
 
-import modele.jeu.Piece;
-import modele.jeu.pieces.*;
-
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.Observable;
+import modele.jeu.Piece;
+import modele.jeu.pieces.*;
 
 
 public class Plateau extends Observable {
@@ -57,9 +56,9 @@ public class Plateau extends Observable {
         // new Fou(this, true).allerSurCase(grilleCases[5][7]);
         new Cavalier(this, true).allerSurCase(grilleCases[6][7]);
         new Tour(this, true).allerSurCase(grilleCases[7][7]);
-        // for (int x = 0; x < SIZE_X; x++) {
-        //     new Pion(this, true).allerSurCase(grilleCases[x][6]);
-        // }
+        for (int x = 0; x < SIZE_X; x++) {
+            new Pion(this, true).allerSurCase(grilleCases[x][6]);
+        }
 
         // Pièces noires
         new Tour(this, false).allerSurCase(grilleCases[0][0]);
@@ -70,9 +69,9 @@ public class Plateau extends Observable {
         // new Fou(this, false).allerSurCase(grilleCases[5][0]);
         new Cavalier(this, false).allerSurCase(grilleCases[6][0]);
         new Tour(this, false).allerSurCase(grilleCases[7][0]);
-        // for (int x = 0; x < SIZE_X; x++) {
-        //     new Pion(this, false).allerSurCase(grilleCases[x][1]);
-        // }
+        for (int x = 0; x < SIZE_X; x++) {
+            new Pion(this, false).allerSurCase(grilleCases[x][1]);
+        }
 
         setChanged();
         notifyObservers();
