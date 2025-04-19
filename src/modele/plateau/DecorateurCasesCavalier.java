@@ -31,12 +31,6 @@ public class DecorateurCasesCavalier extends DecorateurCasesAccessibles {
                 Piece p = target.getPiece();
                 if (p == null || p.couleur != piece.couleur) {
                     accessible.add(target);
-                    // Capturer la pièce et l'ajouter à la liste des pièces mortes
-                    if (p != null && p.couleur != piece.couleur) {
-                        System.out.println("Capture de la pièce : " + p);
-                        plateau.ajouterPieceMorte(p);
-                        p.setCase(null); // Retirer la pièce capturée de la case
-                    }
                 }
             }
         }

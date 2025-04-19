@@ -83,21 +83,19 @@ public class Plateau extends Observable {
         c.p = p;
 
     }
-
+    
     public void deplacerPiece(Case c1, Case c2) {
         if (c1.p != null) {
-            Piece target = c2.getPiece();
-            if (target != null){
-                ajouterPieceMorte(target);
-                System.out.println("manger");
+            Piece piece = c1.p;
+            c1.quitterLaCase();
+            if(c2.getPiece() != null) {
+                ajouterPieceMorte(c2.getPiece());
             }
-            c1.p.allerSurCase(c2);
+            piece.allerSurCase(c2);
         }
         setChanged();
         notifyObservers();
-
     }
-
 
     /** Indique si p est contenu dans la grille
      */

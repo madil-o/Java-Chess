@@ -46,7 +46,6 @@ public class VueControleur extends JFrame implements Observer {
 
     private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
 
-
     public VueControleur(Jeu _jeu) {
         jeu = _jeu;
         plateau = jeu.getPlateau();
@@ -115,46 +114,31 @@ public class VueControleur extends JFrame implements Observer {
                 jlab.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        boolean couleurJoueurActuel = jeu.isTourBlanc();
-                        Case caseCliquee = plateau.getCases()[xx][yy];
+                        boolean tourBlanc = jeu.isTourBlanc();
+                        Case clic = plateau.getCases()[xx][yy];
                 
-                        // Bloque les clics sur pièces adverses
-                        if (caseCliquee.getPiece() != null && caseCliquee.getPiece().couleur != couleurJoueurActuel) {
-                            System.out.println("Clique invalide !");
-                            return;
-                        }
-                
-                        if (caseClic1 != null && caseClic1.equals(caseCliquee)) {
-                            // Désélection si clic sur la même case
-                            caseClic1 = null;
-                            mettreAJourAffichage();
-                        } 
-                        else if (caseClic1 != null && caseCliquee.getPiece() != null) {
-                            // Changement de sélection si nouvelle pièce alliée
-                            caseClic1 = caseCliquee;
-                            mettreAJourAffichage();  // Réinitialise toutes les couleurs
-                            tabJLabel[xx][yy].setBackground(Color.YELLOW); // Met en surbrillance la nouvelle
-                        } 
-                        else if (caseClic1 == null) {
-                            // Sélection initiale
-                            caseClic1 = caseCliquee;
-                            tabJLabel[xx][yy].setBackground(Color.YELLOW);
-                        } 
-                        else {
-                            // Tentative de déplacement
-                            caseClic2 = caseCliquee;
-                            jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
-                            
-                            if (jeu.isTourBlanc() != couleurJoueurActuel) { // Coup valide
-                                caseClic1 = null;
-                                caseClic2 = null;
+                        if (caseClic1 == null) {
+                            // 1er clic : on sélectionne une pièce ALLIÉE uniquement
+                            if (clic.getPiece() != null && clic.getPiece().couleur == tourBlanc) {
+                                caseClic1 = clic;
+                                tabJLabel[xx][yy].setBackground(Color.YELLOW);
+                            } else {
+                                System.out.println("Clique invalide : sélectionnez d'abord une de vos pièces.");
                             }
+                        } else {
+                            // 2e clic : on envoie le coup, qu'il soit valide ou pas
+                            caseClic2 = clic;
+                            jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
+                
+                            // on réinitialise toujours la sélection pour permettre un nouveau choix
+                            caseClic1 = null;
+                            caseClic2 = null;
+                
+                            // on rafraîchit l'affichage
                             mettreAJourAffichage();
                         }
                     }
                 });
-
-
                 jlab.setOpaque(true);
 
                 if ((y%2 == 0 && x%2 == 0) || (y%2 != 0 && x%2 != 0)) {

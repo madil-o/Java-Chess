@@ -49,12 +49,21 @@ public class Jeu extends Thread{
 
     public boolean appliquerCoup(Coup coup) {
         Piece piece = coup.dep.getPiece();
-        if (piece != null && piece.casesAccessibles.getCasesAccessibles().contains(coup.arr)) {
-            if (piece instanceof Roi && Math.abs(plateau.distancesX(coup.dep, coup.arr)) > 1){
+        if (piece == null) {
+            System.out.println("Coup invalide !");
+            return false;
+        }    
+        if (piece.casesAccessibles.getCasesAccessibles().contains(coup.arr)) {    
+            if (piece instanceof Roi && Math.abs(plateau.distancesX(coup.dep, coup.arr)) > 1) {
                 int d = plateau.distancesX(coup.dep, coup.arr);
                 Case departTour = plateau.positionTour(d, coup.arr);
                 Case arriveeTour = plateau.roqueTour(d, coup.arr);
                 plateau.deplacerPiece(departTour, arriveeTour);
+            }
+            Piece pieceCapturee = coup.arr.getPiece();
+            if (pieceCapturee != null && pieceCapturee.couleur != piece.couleur) {
+                plateau.ajouterPieceMorte(pieceCapturee);
+                pieceCapturee.quitterCase();
             }
             plateau.deplacerPiece(coup.dep, coup.arr);
             return true;
@@ -62,6 +71,7 @@ public class Jeu extends Thread{
         System.out.println("Coup invalide !");
         return false;
     }
+    
 
     @Override
     public void run() {
