@@ -13,9 +13,11 @@ public class Roi extends Piece
 {
     public Roi(Plateau _plateau, boolean _couleur) {
         super(_plateau, _couleur);
-        casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null,
-                                                                                    _plateau, this, 1),
-                                                                                    _plateau, this, 1);
+        casesAccessibles = new DecorateurCasesRoque(new DecorateurCasesEnLigne
+                                                    (new DecorateurCasesEnDiagonale(null, 
+                                                     _plateau, this, 1),
+                                                     _plateau, this, 1),
+                                                     _plateau, this);
 
         // le décorateur récupère les cases en diagonale et en ligne
         //ArrayList<Case> lst = new ArrayList<>();

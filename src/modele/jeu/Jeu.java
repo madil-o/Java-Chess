@@ -1,6 +1,10 @@
 package modele.jeu;
 
+import modele.plateau.Direction;
 import modele.plateau.Plateau;
+import modele.plateau.Case;
+import modele.jeu.Piece;
+import modele.jeu.pieces.*;
 
 public class Jeu extends Thread{
     private Plateau plateau;
@@ -46,6 +50,12 @@ public class Jeu extends Thread{
     public boolean appliquerCoup(Coup coup) {
         Piece piece = coup.dep.getPiece();
         if (piece != null && piece.casesAccessibles.getCasesAccessibles().contains(coup.arr)) {
+            if (piece instanceof Roi && Math.abs(plateau.distancesX(coup.dep, coup.arr)) > 1){
+                int d = plateau.distancesX(coup.dep, coup.arr);
+                Case departTour = plateau.positionTour(d, coup.arr);
+                Case arriveeTour = plateau.roqueTour(d, coup.arr);
+                plateau.deplacerPiece(departTour, arriveeTour);
+            }
             plateau.deplacerPiece(coup.dep, coup.arr);
             return true;
         }

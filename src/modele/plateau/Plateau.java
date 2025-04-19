@@ -105,12 +105,35 @@ public class Plateau extends Observable {
         return p.x >= 0 && p.x < SIZE_X && p.y >= 0 && p.y < SIZE_Y;
     }
 
+    public int distancesX(Case c1, Case c2){
+        return map.get(c2).x - map.get(c1).x;
+    }
+
     public Case appliquerDirection(Direction d, Case c){
         if (c == null) return null;
         Point case_suiv = new Point(map.get(c).x + d.dx, map.get(c).y + d.dy);
         return contenuDansGrille(case_suiv) ? grilleCases[case_suiv.x][case_suiv.y] : null;
     }
-    
+
+    public Case positionTour(int distance, Case arriveeRoi){
+        if (distance > 0){
+            return appliquerDirection(Direction.Droite, arriveeRoi);
+        }
+        else {
+            Case caseCavalier = appliquerDirection(Direction.Gauche, arriveeRoi);
+            return appliquerDirection(Direction.Gauche, caseCavalier);
+        }
+    }
+
+    public Case roqueTour(int distance, Case arriveeRoi){
+        if (distance > 0){
+            return appliquerDirection(Direction.Gauche, arriveeRoi);
+        }
+        else {
+            return appliquerDirection(Direction.Droite, arriveeRoi);
+        }
+    }
+
     private Case caseALaPosition(Point p) {
         Case retour = null;
         
