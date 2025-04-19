@@ -224,6 +224,27 @@ public class Plateau extends Observable {
         return true;
     }
     
+
+    public boolean estPat(boolean couleur) {
+        if (estRoiEnEchec(couleur)) {
+            return false;
+        }
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case caseActuelle = grilleCases[x][y];
+                if (caseActuelle.getPiece() != null && caseActuelle.getPiece().couleur) {
+                    Piece piece = caseActuelle.getPiece();
+                    for (Case caseCible : piece.getCasesAccessibles().getMesCasesAccessibles()) {
+                        if (piece.getCasesAccessibles().getMesCasesAccessibles().contains(caseCible)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
     
 
 }
