@@ -19,10 +19,11 @@ public class DecorateurCasesPion extends DecorateurCasesAccessibles {
         
         Direction dirAvant = piece.couleur ? Direction.Haut : Direction.Bas;
         Case forwardOne = plateau.appliquerDirection(dirAvant, piece.getCase());
-
+    
         if (forwardOne != null && forwardOne.getPiece() == null) {
             accessible.add(forwardOne);
     
+            // Premier mouvement (ligne 1 pour blancs, ligne 6 pour noirs)
             if ((piece.couleur && currentPos.y == 6) || (!piece.couleur && currentPos.y == 1)) {
                 Case forwardTwo = plateau.appliquerDirection(dirAvant, forwardOne);
                 if (forwardTwo != null && forwardTwo.getPiece() == null) {
@@ -30,23 +31,28 @@ public class DecorateurCasesPion extends DecorateurCasesAccessibles {
                 }
             }
         }
-
+        
+        // Captures (en diagonale)
         Direction[] captureDirs = piece.couleur
             ? new Direction[]{Direction.HautGauche, Direction.HautDroite}
             : new Direction[]{Direction.BasGauche, Direction.BasDroite};
-    
+        
         for (Direction dir : captureDirs) {
             Case captureCase = plateau.appliquerDirection(dir, piece.getCase());
             if (captureCase != null) {
                 Piece target = captureCase.getPiece();
                 if (target != null && target.couleur != piece.couleur) {
                     accessible.add(captureCase);
+                    System.out.println("Capture de la pièce : " + target);
+                    plateau.ajouterPieceMorte(target);
+                    target.setCase(null);
                 }
             }
         }
     
         return accessible;
     }
+    
     
     
 }

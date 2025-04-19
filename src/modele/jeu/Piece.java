@@ -33,4 +33,8 @@ public abstract class Piece {
     public Case getCase() {
         return c;
     }
+
+    public void setCase(Case _c) {
+        c = _c;
+    }
 }
