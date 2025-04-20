@@ -10,5 +10,11 @@ public class Pion extends Piece {
         super(_plateau, _couleur);
         casesAccessibles = new DecorateurCasesPion(null, plateau, this);
     }    
-    
+
+    @Override
+    public Piece clone(Plateau nouveauPlateau) {
+        Pion clone = new Pion(nouveauPlateau, this.couleur);
+        clone.setABouge(this.aDejaBouge());
+        return clone;
+    }
 }

@@ -10,4 +10,10 @@ public class Tour extends Piece {
         casesAccessibles = new DecorateurCasesEnLigne(null, _plateau, this, 7);
     }
     
+    @Override
+    public Piece clone(Plateau nouveauPlateau) {
+        Tour clone = new Tour(nouveauPlateau, this.couleur);
+        clone.setABouge(this.aDejaBouge());
+        return clone;
+    }
 }

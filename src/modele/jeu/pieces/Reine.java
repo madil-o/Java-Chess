@@ -11,5 +11,12 @@ public class Reine extends Piece {
         super(_plateau, _couleur);
         casesAccessibles = new DecorateurCasesEnDiagonale(new DecorateurCasesEnLigne(null, plateau, this, 7),
                 plateau, this, 7);
-    }    
+    }   
+    
+    @Override
+    public Piece clone(Plateau nouveauPlateau) {
+        Reine clone = new Reine(nouveauPlateau, this.couleur);
+        clone.setABouge(this.aDejaBouge());
+        return clone;
+    }
 }

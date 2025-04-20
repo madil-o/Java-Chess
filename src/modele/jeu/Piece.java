@@ -12,7 +12,8 @@ public abstract class Piece {
     protected Case c;
     protected Plateau plateau;
     protected DecorateurCasesAccessibles casesAccessibles;
-    public boolean couleur; /* Blanc = 1; Noir = 0 */
+    public boolean couleur; // Blanc = true; Noir = false
+    private boolean aBouge = false;
 
     public Piece(Plateau _plateau, boolean _couleur) {
         plateau = _plateau;
@@ -28,6 +29,7 @@ public abstract class Piece {
         }
         c = _c;
         plateau.arriverCase(c, this);
+        setABouge(true);
     }
 
     public Case getCase() {
@@ -41,4 +43,14 @@ public abstract class Piece {
     public DecorateurCasesAccessibles getCasesAccessibles() {
         return casesAccessibles;
     }
+
+    public boolean aDejaBouge() {
+        return aBouge;
+    }
+
+    public void setABouge(boolean b) {
+        aBouge = b;
+    }
+
+    public abstract Piece clone(Plateau nouveauPlateau);
 }

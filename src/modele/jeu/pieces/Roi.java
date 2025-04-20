@@ -18,9 +18,12 @@ public class Roi extends Piece
                                                      _plateau, this, 1),
                                                      _plateau, this, 1),
                                                      _plateau, this);
+    }
 
-        // le décorateur récupère les cases en diagonale et en ligne
-        //ArrayList<Case> lst = new ArrayList<>();
-        //lst = casesAccessibles.getCasesAccessibles();
+    @Override
+    public Piece clone(Plateau nouveauPlateau) {
+        Roi clone = new Roi(nouveauPlateau, this.couleur);
+        clone.setABouge(this.aDejaBouge());
+        return clone;
     }
 }
