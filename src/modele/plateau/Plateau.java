@@ -182,8 +182,7 @@ public class Plateau extends Observable {
         return null;
     }
 
-    public boolean estRoiEnEchec(boolean couleurRoi) {
-        Case roiCase = trouverRoi(couleurRoi);
+    public boolean estRoiEnEchec(boolean couleurRoi, Case roiCase) {
         if (roiCase == null) return false;        
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
@@ -199,14 +198,14 @@ public class Plateau extends Observable {
     }
 
     public boolean estEchecEtMat(boolean couleurRoi) {
-        if (!estRoiEnEchec(couleurRoi)) {
+        Case roiCase = trouverRoi(couleurRoi);
+        if (!estRoiEnEchec(couleurRoi, roiCase)) {
             return false;
-        }    
-        Case roiCase = trouverRoi(couleurRoi);        
+        }      
         for (Direction d : Direction.values()) {
             Case caseSecuritaire = appliquerDirection(d, roiCase);
             if (caseSecuritaire != null && caseSecuritaire.getPiece() == null) {
-                if (!estRoiEnEchec(couleurRoi)) {
+                if (!estRoiEnEchec(couleurRoi, caseSecuritaire)) {
                     return false;
                 }
             }
@@ -226,7 +225,7 @@ public class Plateau extends Observable {
     
 
     public boolean estPat(boolean couleur) {
-        if (estRoiEnEchec(couleur)) {
+        if (estRoiEnEchec(couleur, trouverRoi(couleur))) {
             return false;
         }
         for (int x = 0; x < SIZE_X; x++) {
