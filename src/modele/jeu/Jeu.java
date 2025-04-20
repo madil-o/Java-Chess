@@ -1,23 +1,21 @@
 package modele.jeu;
 
-import modele.plateau.Direction;
 import modele.plateau.Plateau;
 import modele.plateau.Case;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import modele.jeu.Piece;
 import modele.jeu.pieces.*;
 import java.awt.Point;
 
 public class Jeu extends Thread{
-    private Plateau plateau;
-    private Joueur j1, j2;
+    private final Plateau plateau;
+    private final Joueur j1, j2;
     protected Coup coupRecu;
     private boolean tourBlanc = true;
     private ArrayList<Coup> historique = new ArrayList<>();
-
+    private Pion dernierPionDoublePas = null;
 
     public Jeu() {
         plateau = new Plateau();
@@ -49,7 +47,7 @@ public class Jeu extends Thread{
             notify();
         }
     }
-        
+    
     public boolean appliquerCoup(Coup coup) {
         Piece piece = coup.dep.getPiece();
         if (piece == null || piece.couleur != tourBlanc) {
@@ -57,7 +55,7 @@ public class Jeu extends Thread{
             return false;
         }
 
-        if (!piece.getCasesAccessibles().getCasesAccessibles().contains(coup.arr)) {
+        if (!piece.getCasesAccessibles().getCasesAccessibles().contains(coup.arr) && !estCoupPriseEnPassant(coup)) {
             System.out.println("Coup invalide : destination non atteignable.");
             return false;
         }
@@ -90,6 +88,14 @@ public class Jeu extends Thread{
             pieceCapturee.quitterCase();
         }
 
+        // Prise en passant effective
+        if (estCoupPriseEnPassant(coup)) {
+            Point pos = plateau.getMap().get(coup.arr);
+            Case caseCapturee = plateau.getCases()[pos.x][pos.y + (tourBlanc ? 1 : -1)];
+            plateau.ajouterPieceMorte(caseCapturee.getPiece());
+            caseCapturee.quitterLaCase();
+        }
+
         // Roque ?
         if (piece instanceof Roi && Math.abs(plateau.distancesX(coup.dep, coup.arr)) > 1) {
             int d = plateau.distancesX(coup.dep, coup.arr);
@@ -109,10 +115,44 @@ public class Jeu extends Thread{
             }
         }
 
+        // Enregistrer double pas
+        if (piece instanceof Pion pion) {
+            int y1 = plateau.getMap().get(coup.dep).y;
+            int y2 = plateau.getMap().get(coup.arr).y;
+
+            if (Math.abs(y2 - y1) == 2) {
+                dernierPionDoublePas = pion;
+            } else {
+                dernierPionDoublePas = null;
+            }
+        } else {
+            dernierPionDoublePas = null;
+        }
+
         historique.add(coup);
         return true;
     }
 
+    public boolean estCoupPriseEnPassant(Coup coup) {
+        if (!(coup.dep.getPiece() instanceof Pion)) return false;
+        if (dernierPionDoublePas == null) return false;
+    
+        Pion pion = (Pion) coup.dep.getPiece();
+        Case casePionAdv = dernierPionDoublePas.getCase();
+    
+        Point posDep = plateau.getMap().get(coup.dep);
+        Point posArr = plateau.getMap().get(coup.arr);
+        Point posPionAdv = plateau.getMap().get(casePionAdv);
+    
+        if (posPionAdv == null || posDep == null || posArr == null) return false;
+    
+        boolean memeLigne = posDep.y == posPionAdv.y;
+        boolean aCote = Math.abs(posDep.x - posPionAdv.x) == 1;
+        boolean bonneDestination = posArr.x == posPionAdv.x &&
+                                   posArr.y == posDep.y + (pion.couleur ? -1 : 1);
+    
+        return memeLigne && aCote && bonneDestination;
+    }    
 
     @Override
     public void run() {

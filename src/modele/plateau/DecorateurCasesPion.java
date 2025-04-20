@@ -49,5 +49,4 @@ public class DecorateurCasesPion extends DecorateurCasesAccessibles {
         }
         return accessible;
     }
-    
 }

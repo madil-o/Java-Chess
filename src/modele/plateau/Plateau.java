@@ -197,7 +197,6 @@ public class Plateau extends Observable {
         return true;
     }
     
-
     public boolean estPat(boolean couleur) {
         if (estRoiEnEchec(couleur, trouverRoi(couleur))) return false;
 
@@ -225,7 +224,4 @@ public class Plateau extends Observable {
         }
         return true;
     }
-    
-    
-
 }

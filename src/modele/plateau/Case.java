@@ -19,9 +19,4 @@ public class Case {
     public Piece getPiece() {
         return p;
     }
-
-    public boolean estOccupee() {
-        return p != null;
-    }
-
    }
