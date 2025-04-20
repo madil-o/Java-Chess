@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package modele.plateau;
-
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -36,15 +30,12 @@ public class Plateau extends Observable {
     }
 
     private void initPlateauVide() {
-
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
                 grilleCases[x][y] = new Case(this);
                 map.put(grilleCases[x][y], new Point(x, y));
             }
-
         }
-
     }
 
     public void reinitialiser() {
@@ -90,9 +81,7 @@ public class Plateau extends Observable {
     }
 
     public void arriverCase(Case c, Piece p) {
-
         c.p = p;
-
     }
 
     public void deplacerPiece(Case c1, Case c2) {
@@ -126,57 +115,26 @@ public class Plateau extends Observable {
     }
 
     public Case positionTour(int distance, Case arriveeRoi){
-        if (distance > 0){
-            return appliquerDirection(Direction.Droite, arriveeRoi);
-        }
-        else {
-            Case caseCavalier = appliquerDirection(Direction.Gauche, arriveeRoi);
-            return appliquerDirection(Direction.Gauche, caseCavalier);
-        }
+        if (distance > 0) return appliquerDirection(Direction.Droite, arriveeRoi);
+        Case caseCavalier = appliquerDirection(Direction.Gauche, arriveeRoi);
+        return appliquerDirection(Direction.Gauche, caseCavalier);
     }
 
     public Case roqueTour(int distance, Case arriveeRoi){
-        if (distance > 0){
-            return appliquerDirection(Direction.Gauche, arriveeRoi);
-        }
-        else {
-            return appliquerDirection(Direction.Droite, arriveeRoi);
-        }
+        if (distance > 0) return appliquerDirection(Direction.Gauche, arriveeRoi);
+        return appliquerDirection(Direction.Droite, arriveeRoi);
     }
-
-    private Case caseALaPosition(Point p) {
-        Case retour = null;
-        
-        if (contenuDansGrille(p)) {
-            retour = grilleCases[p.x][p.y];
-        }
-        return retour;
-    }
-
 
     public void ajouterPieceMorte(Piece piece) {
-        if (piece.couleur) {
-            piecesMortesBlanches.add(piece);
-        } else {
-            piecesMortesNoires.add(piece);
-        }
+        if (piece.couleur) piecesMortesBlanches.add(piece);
+        else piecesMortesNoires.add(piece);
     }
 
-    public ArrayList<Piece> getPiecesMortesBlanches() {
-        return piecesMortesBlanches;
-    }
-
-    public ArrayList<Piece> getPiecesMortesNoires() {
-        return piecesMortesNoires;
-    }
-
-    private Case trouverRoi(boolean couleurRoi) {
+    public Case trouverRoi(boolean couleurRoi) {
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
                 Case c = grilleCases[x][y];
-                if (c.getPiece() != null && c.getPiece() instanceof Roi && c.getPiece().couleur == couleurRoi) {
-                    return c;
-                }
+                if (c.getPiece() instanceof Roi && c.getPiece().couleur == couleurRoi) return c;
             }
         }
         return null;
@@ -188,34 +146,50 @@ public class Plateau extends Observable {
             for (int y = 0; y < SIZE_Y; y++) {
                 Case c = grilleCases[x][y];
                 if (c.getPiece() != null && c.getPiece().couleur != couleurRoi) {
-                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) {
-                        return true;
-                    }
+                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) return true;
                 }
             }
         }
         return false;
     }
 
-    public boolean estEchecEtMat(boolean couleurRoi) {
-        Case roiCase = trouverRoi(couleurRoi);
-        if (!estRoiEnEchec(couleurRoi, roiCase)) {
-            return false;
-        }      
-        for (Direction d : Direction.values()) {
-            Case caseSecuritaire = appliquerDirection(d, roiCase);
-            if (caseSecuritaire != null && caseSecuritaire.getPiece() == null) {
-                if (!estRoiEnEchec(couleurRoi, caseSecuritaire)) {
-                    return false;
-                }
-            }
-        }    
+    public Plateau clone() {
+        Plateau clone = new Plateau();
+        clone.reinitialiser();
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
-                Case c = grilleCases[x][y];
-                if (c.getPiece() != null && c.getPiece().couleur == couleurRoi) {
-                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) {
-                        return false;
+                Piece p = grilleCases[x][y].getPiece();
+                if (p != null) {
+                    Piece copie = p.clone(clone);
+                    copie.allerSurCase(clone.getCases()[x][y]);
+                }
+            }
+        }
+        return clone;
+    }
+
+    public boolean estEchecEtMat(boolean couleurRoi) {
+        Case roiCase = trouverRoi(couleurRoi);
+        if (!estRoiEnEchec(couleurRoi, roiCase)) return false;
+
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case origine = grilleCases[x][y];
+                Piece piece = origine.getPiece();
+                if (piece != null && piece.couleur == couleurRoi) {
+                    for (Case destination : piece.getCasesAccessibles().getCasesAccessibles()) {
+                        Plateau simulation = this.clone();
+                        Point posDep = map.get(origine);
+                        Point posArr = map.get(destination);
+                        if (posDep != null && posArr != null) {
+                            Case dep = simulation.getCases()[posDep.x][posDep.y];
+                            Case arr = simulation.getCases()[posArr.x][posArr.y];
+                            simulation.deplacerPiece(dep, arr);
+                            Case roiSim = simulation.trouverRoi(couleurRoi);
+                            if (!simulation.estRoiEnEchec(couleurRoi, roiSim)) {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
@@ -225,17 +199,25 @@ public class Plateau extends Observable {
     
 
     public boolean estPat(boolean couleur) {
-        if (estRoiEnEchec(couleur, trouverRoi(couleur))) {
-            return false;
-        }
+        if (estRoiEnEchec(couleur, trouverRoi(couleur))) return false;
+
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
-                Case caseActuelle = grilleCases[x][y];
-                if (caseActuelle.getPiece() != null && caseActuelle.getPiece().couleur) {
-                    Piece piece = caseActuelle.getPiece();
-                    for (Case caseCible : piece.getCasesAccessibles().getMesCasesAccessibles()) {
-                        if (piece.getCasesAccessibles().getMesCasesAccessibles().contains(caseCible)) {
-                            return false;
+                Case origine = grilleCases[x][y];
+                Piece piece = origine.getPiece();
+                if (piece != null && piece.couleur == couleur) {
+                    for (Case destination : piece.getCasesAccessibles().getCasesAccessibles()) {
+                        Plateau simulation = this.clone();
+                        Point posDep = map.get(origine);
+                        Point posArr = map.get(destination);
+                        if (posDep != null && posArr != null) {
+                            Case dep = simulation.getCases()[posDep.x][posDep.y];
+                            Case arr = simulation.getCases()[posArr.x][posArr.y];
+                            simulation.deplacerPiece(dep, arr);
+                            Case roiSim = simulation.trouverRoi(couleur);
+                            if (!simulation.estRoiEnEchec(couleur, roiSim)) {
+                                return false;
+                            }
                         }
                     }
                 }
