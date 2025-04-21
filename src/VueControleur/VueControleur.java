@@ -7,6 +7,9 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import modele.jeu.Coup;
 import modele.jeu.Jeu;
 import modele.jeu.Piece;
@@ -56,6 +59,9 @@ public class VueControleur extends JFrame implements Observer {
 
         plateau.addObserver(this);
         mettreAJourAffichage();
+        addKeyListener(getKeyListener());
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
 
@@ -203,6 +209,23 @@ public class VueControleur extends JFrame implements Observer {
         jeu.placerPieces();
         mettreAJourAffichage();
     }
-    
-    
+
+    private KeyListener getKeyListener() {
+        return new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    jeu.annulerDernierCoup();
+                    caseClic1 = null;
+                    reinitialiserCouleurs();
+                    mettreAJourAffichage();
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    jeu.refaireCoup();
+                    caseClic1 = null;
+                    reinitialiserCouleurs();
+                    mettreAJourAffichage();
+                }
+            }
+        };
+    }
 }

@@ -11,10 +11,13 @@ import java.awt.Point;
 
 public class Jeu extends Thread{
     private final Plateau plateau;
+    private boolean enReplay = false;
+
     private final Joueur j1, j2;
     protected Coup coupRecu;
     private boolean tourBlanc = true;
     private ArrayList<Coup> historique = new ArrayList<>();
+    private ArrayList<Coup> refaire = new ArrayList<>();
     private Pion dernierPionDoublePas = null;
 
     public Jeu() {
@@ -49,6 +52,13 @@ public class Jeu extends Thread{
     }
     
     public boolean appliquerCoup(Coup coup) {
+        if (enReplay) {
+            Point pDep = plateau.getMap().get(coup.dep);
+            Point pArr = plateau.getMap().get(coup.arr);
+            if (pDep == null || pArr == null) return false;
+            coup.dep = plateau.getCases()[pDep.x][pDep.y];
+            coup.arr = plateau.getCases()[pArr.x][pArr.y];
+        }
         Piece piece = coup.dep.getPiece();
         if (piece == null || piece.couleur != tourBlanc) {
             System.out.println("Coup invalide : mauvaise pièce.");
@@ -97,11 +107,13 @@ public class Jeu extends Thread{
         }
 
         // Roque ?
-        if (piece instanceof Roi && Math.abs(plateau.distancesX(coup.dep, coup.arr)) > 1) {
+        if (piece instanceof Roi && Math.abs(plateau.distancesX(coup.dep, coup.arr)) > 1 && !piece.aDejaBouge()) {
             int d = plateau.distancesX(coup.dep, coup.arr);
             Case departTour = plateau.positionTour(d, coup.arr);
             Case arriveeTour = plateau.roqueTour(d, coup.arr);
-            plateau.deplacerPiece(departTour, arriveeTour);
+            if (departTour.getPiece() != null && !departTour.getPiece().aDejaBouge()) {
+                plateau.deplacerPiece(departTour, arriveeTour);
+            }
         }
 
         plateau.deplacerPiece(coup.dep, coup.arr);
@@ -129,7 +141,9 @@ public class Jeu extends Thread{
             dernierPionDoublePas = null;
         }
 
-        historique.add(coup);
+        if (!enReplay) {
+            historique.add(coup);
+        }
         return true;
     }
 
@@ -162,12 +176,44 @@ public class Jeu extends Thread{
     public void jouerPartie() {
         while(true) {
             Coup c = (tourBlanc) ? j1.getCoup() : j2.getCoup();
-            if(appliquerCoup(c))
+            if(appliquerCoup(c)) {
                 tourBlanc = !tourBlanc;
+                refaire.clear();
+            }
         }
     }
 
     public List<Coup> getHistorique() {
         return historique;
     }
+
+    public void annulerDernierCoup() {
+        if (!historique.isEmpty()) {
+            Coup dernier = historique.remove(historique.size() - 1);
+            refaire.add(0, dernier);
+    
+            plateau.reinitialiser();
+            placerPieces();
+            tourBlanc = true;
+    
+            enReplay = true;
+            for (Coup c : historique) {
+                appliquerCoup(c);
+                tourBlanc = !tourBlanc;
+            }
+            enReplay = false;
+        }
+    }
+
+    public void refaireCoup() {
+        if (!refaire.isEmpty()) {
+            Coup prochain = refaire.remove(0);
+            enReplay = true;
+            appliquerCoup(prochain);
+            enReplay = false;
+            historique.add(prochain);
+            tourBlanc = !tourBlanc;
+        }
+    }
+    
 }
