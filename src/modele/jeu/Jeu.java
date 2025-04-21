@@ -6,10 +6,17 @@ import modele.plateau.Case;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import modele.jeu.pieces.*;
 import java.awt.Point;
 
 public class Jeu extends Thread{
+
+    public interface PromotionListener {
+        String choisirPromotion(boolean estBlanc);
+    }    
+
     private final Plateau plateau;
     private boolean enReplay = false;
 
@@ -19,6 +26,7 @@ public class Jeu extends Thread{
     private ArrayList<Coup> historique = new ArrayList<>();
     private ArrayList<Coup> refaire = new ArrayList<>();
     private Pion dernierPionDoublePas = null;
+    private PromotionListener promotionListener;
 
     public Jeu() {
         plateau = new Plateau();
@@ -118,12 +126,24 @@ public class Jeu extends Thread{
 
         plateau.deplacerPiece(coup.dep, coup.arr);
 
-        // Promotion automatique ?
+        // Promotion personnalisée
         if (piece instanceof Pion) {
             int y = plateau.getMap().get(coup.arr).y;
-            if ((piece.couleur && y == 0) || (!piece.couleur && y == 7)) {
-                Piece dame = new Reine(plateau, piece.couleur);
-                dame.allerSurCase(coup.arr);
+            boolean doitPromouvoir = (piece.couleur && y == 0) || (!piece.couleur && y == 7);
+
+            if (doitPromouvoir) {
+                String choix = "Dame";
+                if (!enReplay && promotionListener != null) {
+                    choix = promotionListener.choisirPromotion(piece.couleur);
+                }
+
+                Piece promotion = switch (choix) {
+                    case "Tour" -> new Tour(plateau, piece.couleur);
+                    case "Fou" -> new Fou(plateau, piece.couleur);
+                    case "Cavalier" -> new Cavalier(plateau, piece.couleur);
+                    default -> new Reine(plateau, piece.couleur);
+                };
+                promotion.allerSurCase(coup.arr);
             }
         }
 
@@ -144,8 +164,14 @@ public class Jeu extends Thread{
         if (!enReplay) {
             historique.add(coup);
         }
+
+        plateau.notifierVue();
         return true;
     }
+
+    public void setPromotionListener(PromotionListener listener) {
+        this.promotionListener = listener;
+    }    
 
     public boolean estCoupPriseEnPassant(Coup coup) {
         if (!(coup.dep.getPiece() instanceof Pion)) return false;

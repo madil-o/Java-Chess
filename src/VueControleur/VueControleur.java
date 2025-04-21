@@ -50,6 +50,18 @@ public class VueControleur extends JFrame implements Observer {
 
     public VueControleur(Jeu _jeu) {
         jeu = _jeu;
+        jeu.setPromotionListener(estBlanc -> {
+            Object[] options = {"Dame", "Tour", "Fou", "Cavalier"};
+            return (String) JOptionPane.showInputDialog(
+                this,
+                "Choisissez une pièce pour la promotion :",
+                "Promotion",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                "Dame"
+            );
+        });        
         plateau = jeu.getPlateau();
         sizeX = plateau.SIZE_X;
         sizeY = plateau.SIZE_Y;

@@ -224,4 +224,10 @@ public class Plateau extends Observable {
         }
         return true;
     }
+
+    public void notifierVue() {
+        setChanged();
+        notifyObservers();
+    }
+    
 }
