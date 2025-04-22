@@ -19,4 +19,8 @@ public class Case {
     public Piece getPiece() {
         return p;
     }
+
+    public Plateau getPlateau() {
+        return plateau;
+    }
    }

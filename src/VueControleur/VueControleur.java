@@ -1,15 +1,15 @@
 package VueControleur;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import modele.jeu.Coup;
 import modele.jeu.Jeu;
 import modele.jeu.Piece;
@@ -48,6 +48,11 @@ public class VueControleur extends JFrame implements Observer {
 
     private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
 
+    private JLabel labelTour;
+    private JTextArea historiqueCoups;
+    private JPanel panelCapturesBlancs;
+    private JPanel panelCapturesNoirs;
+
     public VueControleur(Jeu _jeu) {
         jeu = _jeu;
         jeu.setPromotionListener(estBlanc -> {
@@ -74,8 +79,10 @@ public class VueControleur extends JFrame implements Observer {
         addKeyListener(getKeyListener());
         setFocusable(true);
         requestFocusInWindow();
-    }
 
+        setVisible(true);
+
+    }
 
     private void chargerLesIcones() {
         icoRoiB = chargerIcone("Images/wK.png");
@@ -102,35 +109,92 @@ public class VueControleur extends JFrame implements Observer {
 
     private void placerLesComposantsGraphiques() {
         setTitle("Jeu d'Échecs");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setSize(sizeX * pxCase, sizeY * pxCase);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
-
-        JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
+    
+        // Création du panneau principal
+        JPanel contenu = new JPanel(new BorderLayout());
+    
+        // Plateau d'échecs 
+        JPanel grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX));
+        grilleJLabels.setPreferredSize(new Dimension(sizeX * pxCase, sizeY * pxCase));
         tabJLabel = new JLabel[sizeX][sizeY];
-
+    
         for (int y = 0; y < sizeY; y++) {
             for (int x = 0; x < sizeX; x++) {
                 JLabel jlab = new JLabel();
                 jlab.setOpaque(true);
-                tabJLabel[x][y] = jlab; // on conserve les cases graphiques dans tabJLabel pour avoir un accès pratique à celles-ci (voir mettreAJourAffichage() )
-
-                final int xx = x, yy = y; // permet de compiler la classe anonyme ci-dessous
-                // écouteur de clics
+                jlab.setHorizontalAlignment(SwingConstants.CENTER);
+                tabJLabel[x][y] = jlab;
+    
+                final int xx = x, yy = y;
                 jlab.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         gererClic(xx, yy);
                     }
                 });
-
-                Color base = ((x + y) % 2 == 0) ? new Color(50, 50, 110) : new Color(150, 150, 210);
+    
+                Color base = ((x + y) % 2 == 0) ? new Color(150, 150, 210) : new Color(50, 50, 110);
                 jlab.setBackground(base);
                 grilleJLabels.add(jlab);
             }
         }
-        add(grilleJLabels);
+    
+        // Panneau latéral
+        JPanel panneauDroite = new JPanel();
+        panneauDroite.setLayout(new BoxLayout(panneauDroite, BoxLayout.Y_AXIS));
+        panneauDroite.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
+        labelTour = new JLabel("Tour des Blancs");
+        labelTour.setAlignmentX(Component.CENTER_ALIGNMENT);
+        labelTour.setFont(new Font("Arial", Font.BOLD, 16));
+        panneauDroite.add(labelTour);
+        panneauDroite.add(Box.createVerticalStrut(10));
+    
+        historiqueCoups = new JTextArea(15, 12);
+        historiqueCoups.setEditable(false);
+        JScrollPane scrollHistorique = new JScrollPane(historiqueCoups);
+        scrollHistorique.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panneauDroite.add(new JLabel("Historique des coups :"));
+        panneauDroite.add(scrollHistorique);
+        panneauDroite.add(Box.createVerticalStrut(10));
+    
+        panneauDroite.add(new JLabel("Pièces capturées :"));
+        panelCapturesBlancs = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelCapturesNoirs = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panneauDroite.add(new JLabel("Par les Noirs :"));
+        JScrollPane scrollBlancs = new JScrollPane(panelCapturesBlancs);
+        scrollBlancs.setPreferredSize(new Dimension(150, 40));
+        scrollBlancs.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollBlancs.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        
+        JScrollPane scrollNoirs = new JScrollPane(panelCapturesNoirs);
+        scrollNoirs.setPreferredSize(new Dimension(150, 40));
+        scrollNoirs.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollNoirs.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        
+        panneauDroite.add(scrollBlancs);
+        panneauDroite.add(new JLabel("Par les Blancs :"));
+        panneauDroite.add(scrollNoirs);
+        
+        panneauDroite.add(Box.createVerticalStrut(10));
+    
+        JButton boutonRejouer = new JButton("Rejouer la partie");
+        boutonRejouer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        boutonRejouer.addActionListener(e -> recommencerPartie());
+        panneauDroite.add(boutonRejouer);
+    
+        // Ajout dans le layout principal
+        contenu.add(grilleJLabels, BorderLayout.CENTER);
+        contenu.add(panneauDroite, BorderLayout.EAST);
+    
+        // Finalisation
+        setContentPane(contenu);
+        pack();
+        setLocationRelativeTo(null); // centre la fenêtre
     }
+    
 
     private void gererClic(int x, int y) {
         Case clic = plateau.getCases()[x][y];
@@ -151,7 +215,7 @@ public class VueControleur extends JFrame implements Observer {
     private void reinitialiserCouleurs() {
         for (int y = 0; y < sizeY; y++) {
             for (int x = 0; x < sizeX; x++) {
-                Color base = ((x + y) % 2 == 0) ? new Color(50, 50, 110) : new Color(150, 150, 210);
+                Color base = ((x + y) % 2 == 0) ? new Color(150, 150, 210) : new Color(50, 50, 110);
                 tabJLabel[x][y].setBackground(base);
             }
         }
@@ -162,6 +226,9 @@ public class VueControleur extends JFrame implements Observer {
      */
     private void mettreAJourAffichage() {
         setTitle("Jeu d'Échecs - Tour des " + (jeu.isTourBlanc() ? "Blancs" : "Noirs"));
+        if (labelTour != null) {
+            labelTour.setText("Tour des " + (jeu.isTourBlanc() ? "Blancs" : "Noirs"));
+        }
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
                 tabJLabel[x][y].setIcon(null);
@@ -169,6 +236,37 @@ public class VueControleur extends JFrame implements Observer {
                 if (p != null) tabJLabel[x][y].setIcon(getIcone(p));
             }
         }
+
+        if (historiqueCoups != null) {
+            StringBuilder sb = new StringBuilder();
+            int i = 1;
+            for (Coup c : jeu.getHistorique()) {
+                sb.append(i++).append(". ").append(c).append("\n");
+            }
+            historiqueCoups.setText(sb.toString());
+        }
+        
+        // Affichage des pièces capturées
+        if (panelCapturesBlancs != null && panelCapturesNoirs != null) {
+            panelCapturesBlancs.removeAll();
+            panelCapturesNoirs.removeAll();
+        
+            for (Piece p : plateau.getPiecesMortesBlanches()) {
+                JLabel label = new JLabel(redimensionnerIcone(getIcone(p), 30));
+                panelCapturesBlancs.add(label);
+            }
+        
+            for (Piece p : plateau.getPiecesMortesNoires()) {
+                JLabel label = new JLabel(redimensionnerIcone(getIcone(p), 30));
+                panelCapturesNoirs.add(label);
+            }
+        
+            panelCapturesBlancs.revalidate();
+            panelCapturesBlancs.repaint();
+            panelCapturesNoirs.revalidate();
+            panelCapturesNoirs.repaint();
+        }
+        
 
         // Fin de partie ?
         if (plateau.estRoiEnEchec(true, plateau.trouverRoi(true)) && plateau.estEchecEtMat(true)) {
@@ -219,6 +317,8 @@ public class VueControleur extends JFrame implements Observer {
     public void recommencerPartie() {
         plateau.reinitialiser();
         jeu.placerPieces();
+        jeu.setTourBlanc(true);
+        jeu.resetHistorique();
         mettreAJourAffichage();
     }
 
@@ -240,4 +340,9 @@ public class VueControleur extends JFrame implements Observer {
             }
         };
     }
+
+    private ImageIcon redimensionnerIcone(ImageIcon icon, int taille) {
+        Image img = icon.getImage().getScaledInstance(taille, taille, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }    
 }

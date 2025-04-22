@@ -3,6 +3,7 @@ package modele.plateau;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import modele.jeu.Piece;
 import modele.jeu.pieces.*;
@@ -115,10 +116,16 @@ public class Plateau extends Observable {
     }
 
     public Case positionTour(int distance, Case arriveeRoi){
-        if (distance > 0) return appliquerDirection(Direction.Droite, arriveeRoi);
+        if (distance > 0) {
+            return appliquerDirection(Direction.Droite, arriveeRoi);
+        }
+
         Case caseCavalier = appliquerDirection(Direction.Gauche, arriveeRoi);
+        if (caseCavalier == null) return null;
+
         return appliquerDirection(Direction.Gauche, caseCavalier);
     }
+
 
     public Case roqueTour(int distance, Case arriveeRoi){
         if (distance > 0) return appliquerDirection(Direction.Gauche, arriveeRoi);
@@ -141,12 +148,17 @@ public class Plateau extends Observable {
     }
 
     public boolean estRoiEnEchec(boolean couleurRoi, Case roiCase) {
-        if (roiCase == null) return false;        
+        if (roiCase == null) {
+            return false;
+        }
+
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
                 Case c = grilleCases[x][y];
                 if (c.getPiece() != null && c.getPiece().couleur != couleurRoi) {
-                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) return true;
+                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -170,33 +182,46 @@ public class Plateau extends Observable {
 
     public boolean estEchecEtMat(boolean couleurRoi) {
         Case roiCase = trouverRoi(couleurRoi);
+        if (roiCase == null) return false; // au cas où
+    
         if (!estRoiEnEchec(couleurRoi, roiCase)) return false;
-
+    
+        // Parcours toutes les pièces alliées
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
                 Case origine = grilleCases[x][y];
                 Piece piece = origine.getPiece();
+    
                 if (piece != null && piece.couleur == couleurRoi) {
-                    for (Case destination : piece.getCasesAccessibles().getCasesAccessibles()) {
+                    List<Case> destinations = piece.getCasesAccessibles().getMesCasesAccessibles();
+    
+                    for (Case destination : destinations) {
                         Plateau simulation = this.clone();
+    
+                        // retrouver les bonnes cases dans la simulation
                         Point posDep = map.get(origine);
                         Point posArr = map.get(destination);
+    
                         if (posDep != null && posArr != null) {
                             Case dep = simulation.getCases()[posDep.x][posDep.y];
                             Case arr = simulation.getCases()[posArr.x][posArr.y];
+    
                             simulation.deplacerPiece(dep, arr);
+    
                             Case roiSim = simulation.trouverRoi(couleurRoi);
-                            if (!simulation.estRoiEnEchec(couleurRoi, roiSim)) {
-                                return false;
+                            if (roiSim != null && !simulation.estRoiEnEchec(couleurRoi, roiSim)) {
+                                return false; // il y a une issue
                             }
                         }
                     }
                 }
             }
         }
-        return true;
+    
+        return true; // aucune issue : échec et mat
     }
     
+
     public boolean estPat(boolean couleur) {
         if (estRoiEnEchec(couleur, trouverRoi(couleur))) return false;
 
@@ -229,5 +254,12 @@ public class Plateau extends Observable {
         setChanged();
         notifyObservers();
     }
-    
+
+    public ArrayList<Piece> getPiecesMortesBlanches() {
+        return piecesMortesBlanches;
+    }
+
+    public ArrayList<Piece> getPiecesMortesNoires() {
+        return piecesMortesNoires;
+    }
 }

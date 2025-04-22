@@ -8,7 +8,7 @@ public abstract class DecorateurCasesAccessibles {
     Plateau plateau;
     Piece piece;
 
-    private DecorateurCasesAccessibles base;
+    protected DecorateurCasesAccessibles base;
 
     public DecorateurCasesAccessibles(DecorateurCasesAccessibles _baseDecorateur,
                                       Plateau _plateau,

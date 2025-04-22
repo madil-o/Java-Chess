@@ -26,10 +26,11 @@ public abstract class Piece {
     public void allerSurCase(Case _c) {
         if (c != null) {
             quitterCase();
+            setABouge(true);
         }
         c = _c;
         plateau.arriverCase(c, this);
-        setABouge(true);
+        //setABouge(true);
     }
 
     public Case getCase() {

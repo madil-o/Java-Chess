@@ -9,7 +9,7 @@ public class Reine extends Piece {
 
     public Reine(modele.plateau.Plateau _plateau, boolean _couleur) {
         super(_plateau, _couleur);
-        casesAccessibles = new DecorateurCasesEnDiagonale(new DecorateurCasesEnLigne(null, plateau, this, 7),
+        casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null, plateau, this, 7),
                 plateau, this, 7);
     }   
     
