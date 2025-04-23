@@ -73,7 +73,7 @@ public class DecorateurCasesRoque extends DecorateurCasesAccessibles {
         Case roiCase = roi.getCase();
         Point pRoi = plateau.getMap().get(roiCase);
         if (pRoi == null) return false;
-
+        if(plateau.estRoiEnEchec(roi.couleur, roiCase)) return false;
         for (Case c : chemin) {
             Plateau simulation = plateau.clone();
             Point pC = plateau.getMap().get(c);
