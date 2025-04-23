@@ -84,7 +84,8 @@ public class Jeu extends Thread {
         if (simPiece == null) return false;
 
         simulation.deplacerPiece(caseDep, caseArr);
-        if (simulation.estRoiEnEchec(tourBlanc, simulation.trouverRoi(tourBlanc))) {
+        if (simulation.estRoiEnEchec(piece.couleur, simulation.trouverRoi(piece.couleur))) {
+
             System.out.println("Coup interdit : met ou laisse le roi en échec.");
             return false;
         }
@@ -177,10 +178,20 @@ public class Jeu extends Thread {
     public void jouerPartie() {
         while(true) {
             Coup c = (tourBlanc) ? j1.getCoup() : j2.getCoup();
-            if(appliquerCoup(c)) {
+            if (appliquerCoup(c)) {
+                boolean prochainJoueur = !tourBlanc;
+                boolean roiEnEchec = plateau.estRoiEnEchec(prochainJoueur, plateau.trouverRoi(prochainJoueur));
+                boolean aDesCoups = (prochainJoueur ? j1 : j2).aDesCoupsLegaux();
+            
+                if (roiEnEchec && !aDesCoups) {
+                    break;
+                }
+            
                 tourBlanc = !tourBlanc;
                 refaire.clear();
             }
+            
+            
         }
     }
 
@@ -189,8 +200,6 @@ public class Jeu extends Thread {
     }
 
     public void annulerDernierCoup() {
-        System.out.println("Historique : " + historique.size() + " coup(s)");
-
         if (!historique.isEmpty()) {
             Coup dernier = historique.remove(historique.size() - 1);
             refaire.add(0, dernier);

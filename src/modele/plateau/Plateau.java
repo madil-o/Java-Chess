@@ -151,12 +151,12 @@ public class Plateau extends Observable {
         if (roiCase == null) {
             return false;
         }
-
+    
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
                 Case c = grilleCases[x][y];
                 if (c.getPiece() != null && c.getPiece().couleur != couleurRoi) {
-                    if (c.getPiece().getCasesAccessibles().getMesCasesAccessibles().contains(roiCase)) {
+                    if (c.getPiece().getCasesAccessibles().getCasesAccessibles().contains(roiCase)) {
                         return true;
                     }
                 }
@@ -164,7 +164,7 @@ public class Plateau extends Observable {
         }
         return false;
     }
-
+    
     public Plateau clone() {
         Plateau clone = new Plateau();
         clone.reinitialiser();
@@ -262,4 +262,20 @@ public class Plateau extends Observable {
     public ArrayList<Piece> getPiecesMortesNoires() {
         return piecesMortesNoires;
     }
+
+    public ArrayList<Piece> getPieces(boolean couleur) {
+        ArrayList<Piece> pieces = new ArrayList<>();
+    
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case c = grilleCases[x][y];
+                Piece p = c.getPiece();
+                if (p != null && p.couleur == couleur) {
+                    pieces.add(p);
+                }
+            }
+        }
+    
+        return pieces;
+    }    
 }
