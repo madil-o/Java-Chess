@@ -261,4 +261,12 @@ public class Jeu extends Thread {
     public void setTourBlanc(boolean valeur) {
         this.tourBlanc = valeur;
     }    
+
+    public Joueur getJ1() {
+        return j1;
+    }
+
+    public Joueur getJ2() {
+        return j2;
+    }
 }
